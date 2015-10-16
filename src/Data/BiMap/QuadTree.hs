@@ -11,8 +11,6 @@
 -- Module:  Data.BiMap
 -- Author:  sternenseemann
 -- Licence: LGPL-3
---
--- A BiMap is isomorphic to a list of isomorphisms.
 ---------------------------------------------------
 
 module Data.BiMap.QuadTree
@@ -28,9 +26,10 @@ import           Prelude        hiding (lookup)
 import           Data.Bifunctor
 import           Data.Maybe     (Maybe (..))
 
+-- | Operators
 infixl 9 !
 
--- | A bidirectional Map.
+-- | A bidirectional Map
 data BiMap k y = Branch
   { key        :: k
   , yek        :: y
@@ -55,6 +54,7 @@ empty = Leaf
 singleton :: (Ord k, Ord y) => k -> y -> BiMap k y
 singleton key yek = insert key yek empty
 
+-- | Inserts a relation between a key and a yek into the BiMap
 insert :: (Ord k, Ord y) => k -> y -> BiMap k y -> BiMap k y
 insert key yek Leaf = Branch key yek Leaf Leaf Leaf Leaf
 insert key yek (Branch key' yek' ss sg gs gg)
@@ -64,12 +64,15 @@ insert key yek (Branch key' yek' ss sg gs gg)
   | key > key' && yek > yek' = Branch key' yek' ss sg gs (insert key yek gg)
   | otherwise                = error "key and yek must be unique"
 
+-- | Constructs a BiMap from a List of tuples consisting of a key and yek
 fromList :: (Ord k, Ord y) => [(k, y)] -> BiMap k y
 fromList = foldl (flip . uncurry $ insert) empty
 
+-- | Infix alias to lookup
 (!) :: (Ord k, Ord y) => Either k y -> BiMap k y -> Maybe (k, y)
 query ! bimap = lookup query bimap
 
+-- | Looks up Either a (Left key) or a (Right yek) in a BiMap 
 lookup :: (Ord k, Ord y) => Either k y -> BiMap k y -> Maybe (k, y)
 lookup _ Leaf = Nothing
 lookup query@(Left key) (Branch key' yek' ss sg gs gg)
@@ -81,15 +84,19 @@ lookup query@(Right yek) (Branch key' yek' ss sg gs gg)
   | yek <  yek' = doubleLookup query ss gs
   | yek >  yek' = doubleLookup query gg sg
 
+-- | Internal recursion function for lookup
 doubleLookup :: (Ord k, Ord y) => Either k y -> BiMap k y -> BiMap k y -> Maybe (k, y)
 doubleLookup query a b = pickJust (lookup query a) (lookup query b)
 
+-- | Takes two Maybes and returns if one of these are a Just, Nothing if both are Nothing or Just
+-- Used internally in lookup
 pickJust :: Maybe a -> Maybe a -> Maybe a
 pickJust Nothing Nothing   = Nothing
 pickJust (Just _) (Just _) = Nothing
 pickJust (Just x) Nothing  = Just x
 pickJust Nothing (Just y)  = Just y
 
+-- | Test BiMap
 humanization :: BiMap String Int
 humanization = fromList [ ("two", 2)
                         , ("three", 3)
