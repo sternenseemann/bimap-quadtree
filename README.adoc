@@ -1,0 +1,66 @@
+BiMap QuadTree
+==============
+sternenseemann
+
+A BiMap is a Map that does not make use of a Key → Value scheme.
+
+Instead a BiMap allows lookup of both Keys and "Values" (called 'Yek' from now on).
+
+Both operations (lookup of a Key or a Yek) are both as efficient.
+
+== Stability
+
+The API is not complete yet. There may be unfixed bugs.
+
+So do not use it in production yet.
+
+== Building
+
+=== Standard Method
+
+[source,shell]
+----
+cabal update
+(cabal sandbox init)
+cabal install --only-dependencies
+cabal build
+
+cabal repl # for playing around
+----
+
+=== Using Nix
+
+[source, shell]
+----
+nix-shell
+cabal build
+cabal repl # for playing around
+----
+
+== Documentation
+
+…can be generated using Haddock: `cabal haddock`.
+
+The API aims to be as similar to `Data.Map` as possible.
+
+== TODO
+
+* Functor instance?
+* Foldable instance / foldl
+* Traversable instance
+* Monoid instance
+* union(With)
+* member / notMember
+* delete
+* adjust(WithKey)
+* keys, assocs
+* fromSet
+* keysSet
+* toList
+* filter
+* difference
+* … (rest of the API)
+
+== Licence
+
+LGPL-3.
