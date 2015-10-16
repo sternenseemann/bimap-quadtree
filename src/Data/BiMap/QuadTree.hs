@@ -69,8 +69,8 @@ fromList :: (Ord k, Ord y) => [(k, y)] -> BiMap k y
 fromList = foldl (flip . uncurry $ insert) empty
 
 -- | Infix alias to lookup
-(!) :: (Ord k, Ord y) => Either k y -> BiMap k y -> Maybe (k, y)
-query ! bimap = lookup query bimap
+(!) :: (Ord k, Ord y) => BiMap k y -> Either k y -> Maybe (k, y)
+bimap ! query = lookup query bimap
 
 -- | Looks up Either a (Left key) or a (Right yek) in a BiMap 
 lookup :: (Ord k, Ord y) => Either k y -> BiMap k y -> Maybe (k, y)
