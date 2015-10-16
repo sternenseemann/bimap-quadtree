@@ -4,12 +4,12 @@ let
 
   inherit (nixpkgs) pkgs;
 
-  f = { mkDerivation, base, stdenv }:
+  f = { mkDerivation, base, bifunctors, stdenv }:
       mkDerivation {
         pname = "bimap-quadtree";
         version = "0.0.1.0";
         src = ./.;
-        libraryHaskellDepends = [ base ];
+        libraryHaskellDepends = [ base bifunctors ];
         description = "biderectional maps";
         license = stdenv.lib.licenses.gpl3;
       };

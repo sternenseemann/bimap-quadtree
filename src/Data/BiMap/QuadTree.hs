@@ -1,12 +1,12 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE PatternGuards   #-}
 ---------------------------------------------------
---  ____  _ __  __                ___                  _ _____              
--- | __ )(_)  \/  | __ _ _ __    / _ \ _   _  __ _  __| |_   _| __ ___  ___ 
+--  ____  _ __  __                ___                  _ _____
+-- | __ )(_)  \/  | __ _ _ __    / _ \ _   _  __ _  __| |_   _| __ ___  ___
 -- |  _ \| | |\/| |/ _` | '_ \  | | | | | | |/ _` |/ _` | | || '__/ _ \/ _ \
 -- | |_) | | |  | | (_| | |_) | | |_| | |_| | (_| | (_| | | || | |  __/  __/
 -- |____/|_|_|  |_|\__,_| .__/   \__\_\\__,_|\__,_|\__,_| |_||_|  \___|\___|
---                      |_|                                                 
+--                      |_|
 --
 -- Module:  Data.BiMap
 -- Author:  sternenseemann
@@ -23,10 +23,10 @@ module Data.BiMap.QuadTree
   , (!)
     ) where
 
+import           Prelude        hiding (lookup)
 
-import           Prelude    hiding (lookup)
-
-import           Data.Maybe (Maybe (..))
+import           Data.Bifunctor
+import           Data.Maybe     (Maybe (..))
 
 infixl 9 !
 
@@ -41,6 +41,11 @@ data BiMap k y = Branch
   }
   | Leaf
   deriving (Show, Eq)
+
+instance Bifunctor BiMap where
+  bimap _  _  Leaf = Leaf
+  bimap fk fy (Branch key yek ss sg gs gg) = Branch (fk key) (fy yek)
+    (bimap fk fy ss) (bimap fk fy sg) (bimap fk fy gs) (bimap fk fy gg)
 
 -- | The empty BiMap
 empty :: BiMap k y
