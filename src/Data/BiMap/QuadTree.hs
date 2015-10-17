@@ -46,6 +46,11 @@ instance Bifunctor BiMap where
   bimap fk fy (Branch key yek ss sg gs gg) = Branch (fk key) (fy yek)
     (bimap fk fy ss) (bimap fk fy sg) (bimap fk fy gs) (bimap fk fy gg)
 
+instance Functor (BiMap a) where
+  fmap _ Leaf = Leaf
+  fmap f (Branch key yek ss sg gs gg) = Branch key (f yek)
+    (fmap f ss) (fmap f sg) (fmap f gs) (fmap f gg)
+
 -- | The empty BiMap
 empty :: BiMap k y
 empty = Leaf
