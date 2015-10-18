@@ -16,10 +16,12 @@
 module Data.BiMap.QuadTree
   ( empty
   , fromList
+  , toList
   , insert
   , lookup
   , (!)
     ) where
+   
 
 import           Prelude        hiding (lookup)
 
@@ -73,6 +75,11 @@ insert key yek (Branch key' yek' ss sg gs gg)
 fromList :: (Ord k, Ord y) => [(k, y)] -> BiMap k y
 fromList = foldl (flip . uncurry $ insert) empty
 
+-- | Giving back a BiMap as a List of tuples
+toList :: (Ord k, Ord y) => BiMap k y -> [(k, y)]
+toList (Branch k y ss sg gs gg) = (k, y): toList ss ++ toList sg ++ toList gs ++ toList gg ++ []
+toList Leaf = []
+
 -- | Infix alias to lookup
 (!) :: (Ord k, Ord y) => BiMap k y -> Either k y -> Maybe (k, y)
 bimap ! query = lookup query bimap
@@ -100,6 +107,10 @@ pickJust Nothing Nothing   = Nothing
 pickJust (Just _) (Just _) = Nothing
 pickJust (Just x) Nothing  = Just x
 pickJust Nothing (Just y)  = Just y
+
+
+
+
 
 -- | Test BiMap
 humanization :: BiMap String Int
