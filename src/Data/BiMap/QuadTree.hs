@@ -9,7 +9,7 @@
 --                      |_|
 --
 -- Module:  Data.BiMap
--- Author:  sternenseemann
+-- Author:  sternenseemann, Bez
 -- Licence: LGPL-3
 ---------------------------------------------------
 
@@ -43,8 +43,11 @@ data BiMap k y = Branch
   | Leaf
   deriving (Show, Eq)
 
+-- | This is no real bimapping, since the bimap might not be correct anyomore at all
+-- it is recommended to use bimap' , for since it has certainty for the bimap to be in
+-- correct order afterwards
 instance Bifunctor BiMap where
-  bimap _  _  Leaf = Leaf
+  bimap _  _  Leaf = Leaf 
   bimap fk fy (Branch key yek ss sg gs gg) = Branch (fk key) (fy yek)
     (bimap fk fy ss) (bimap fk fy sg) (bimap fk fy gs) (bimap fk fy gg)
 
@@ -52,6 +55,15 @@ instance Functor (BiMap a) where
   fmap _ Leaf = Leaf
   fmap f (Branch key yek ss sg gs gg) = Branch key (f yek)
     (fmap f ss) (fmap f sg) (fmap f gs) (fmap f gg)
+
+-- | Really bimapping over the bimap and applying the functions
+bimap' :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
+bimap' fk fy map = let l = toList map 
+  in fromList (fmap (bimap fk fy) l) 
+
+-- | Really bimapping over the bimap
+realbimap :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
+realbimap = bimap'
 
 -- | The empty BiMap
 empty :: BiMap k y
