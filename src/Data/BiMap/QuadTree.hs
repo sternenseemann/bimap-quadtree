@@ -21,7 +21,7 @@ module Data.BiMap.QuadTree
   , lookup
   , (!)
     ) where
-   
+
 
 import           Prelude        hiding (lookup)
 
@@ -47,7 +47,7 @@ data BiMap k y = Branch
 -- it is recommended to use bimap' , for since it has certainty for the bimap to be in
 -- correct order afterwards
 instance Bifunctor BiMap where
-  bimap _  _  Leaf = Leaf 
+  bimap _  _  Leaf = Leaf
   bimap fk fy (Branch key yek ss sg gs gg) = Branch (fk key) (fy yek)
     (bimap fk fy ss) (bimap fk fy sg) (bimap fk fy gs) (bimap fk fy gg)
 
@@ -58,8 +58,8 @@ instance Functor (BiMap a) where
 
 -- | Really bimapping over the bimap and applying the functions
 bimap' :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
-bimap' fk fy map = let l = toList map 
-  in fromList (fmap (bimap fk fy) l) 
+bimap' fk fy map = let l = toList map
+  in fromList (fmap (bimap fk fy) l)
 
 -- | Really bimapping over the bimap
 realbimap :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
@@ -96,7 +96,7 @@ toList Leaf = []
 (!) :: (Ord k, Ord y) => BiMap k y -> Either k y -> Maybe (k, y)
 bimap ! query = lookup query bimap
 
--- | Looks up Either a (Left key) or a (Right yek) in a BiMap 
+-- | Looks up Either a (Left key) or a (Right yek) in a BiMap
 lookup :: (Ord k, Ord y) => Either k y -> BiMap k y -> Maybe (k, y)
 lookup _ Leaf = Nothing
 lookup query@(Left key) (Branch key' yek' ss sg gs gg)

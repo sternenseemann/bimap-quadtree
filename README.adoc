@@ -56,7 +56,6 @@ The API aims to be as similar to `Data.Map` as possible.
 * keys, assocs
 * fromSet
 * keysSet
-* toList
 * filter
 * difference
 * … (rest of the API)
