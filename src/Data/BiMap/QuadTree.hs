@@ -1,5 +1,6 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE PatternGuards   #-}
+{-# LANGUAGE InstanceSigs    #-}
 ---------------------------------------------------
 --  ____  _ __  __                ___                  _ _____
 -- | __ )(_)  \/  | __ _ _ __    / _ \ _   _  __ _  __| |_   _| __ ___  ___
@@ -43,28 +44,6 @@ data BiMap k y = Branch
   | Leaf
   deriving (Show, Eq)
 
--- | This is no real bimapping, since the bimap might not be correct anyomore at all
--- it is recommended to use bimap' , for since it has certainty for the bimap to be in
--- correct order afterwards
-instance Bifunctor BiMap where
-  bimap _  _  Leaf = Leaf
-  bimap fk fy (Branch key yek ss sg gs gg) = Branch (fk key) (fy yek)
-    (bimap fk fy ss) (bimap fk fy sg) (bimap fk fy gs) (bimap fk fy gg)
-
-instance Functor (BiMap a) where
-  fmap _ Leaf = Leaf
-  fmap f (Branch key yek ss sg gs gg) = Branch key (f yek)
-    (fmap f ss) (fmap f sg) (fmap f gs) (fmap f gg)
-
--- | Really bimapping over the bimap and applying the functions
-bimap' :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
-bimap' fk fy map = let l = toList map
-  in fromList (fmap (bimap fk fy) l)
-
--- | Really bimapping over the bimap
-realbimap :: (Ord a, Ord b, Ord c, Ord d) => (a -> b) -> (c -> d) -> BiMap a c -> BiMap b d
-realbimap = bimap'
-
 -- | The empty BiMap
 empty :: BiMap k y
 empty = Leaf
@@ -89,7 +68,7 @@ fromList = foldl (flip . uncurry $ insert) empty
 
 -- | Giving back a BiMap as a List of tuples
 toList :: (Ord k, Ord y) => BiMap k y -> [(k, y)]
-toList (Branch k y ss sg gs gg) = (k, y): toList ss ++ toList sg ++ toList gs ++ toList gg ++ []
+toList (Branch k y ss sg gs gg) = (k, y) : toList ss ++ toList sg ++ toList gs ++ toList gg
 toList Leaf = []
 
 -- | Infix alias to lookup
